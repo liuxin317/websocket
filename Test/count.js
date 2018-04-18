@@ -5,9 +5,11 @@ window.onload = () => {
     ws = new WebSocket("wss://echo.websocket.org");
 
     switch (ws.readyState) {
-      case WebSocket.CONNECTING: // 正在连接
+      case 0: // 正在连接
+        console.log(ws.readyState)
         document.querySelector('#status').innerText = "正在连接";
-      case WebSocket.OPEN: // 连接成功
+      case 1: // 连接成功
+        console.log(ws.readyState)
         ws.onopen = function (event) {
           document.querySelector('#status').innerText = "连接成功";
         }
@@ -17,9 +19,11 @@ window.onload = () => {
           elm.innerHTML += (`<p>${ msg.data }</p>`);
           console.log('Count is: ' + msg.data);
         };
-      case WebSocket.CLOSING: // 连接正在关闭
+      case 2: // 连接正在关闭
+        console.log(ws.readyState)
         document.querySelector('#status').innerText = "连接正在关闭";
-      case WebSocket.CLOSED: // 连接已经关闭
+      case 3: // 连接已经关闭
+        console.log(ws.readyState)
         ws.onclose = function (event) {
           console.log('关闭的回调')
           document.querySelector('#status').innerText = "连接已经关闭";
@@ -29,6 +33,16 @@ window.onload = () => {
 
   document.getElementById('send').onclick = sendMessge;
 
+  document.querySelector('#close').onclick = function () {
+    if (ws) {
+      ws.close()
+      ws = "";
+      document.querySelector('#status').innerText = ws;
+    } else {
+      alert("还未连接上服务器！")
+    }
+  }
+
   function sendMessge () {
     if (ws) {
       var val = document.querySelector('#message').value;
@@ -36,6 +50,5 @@ window.onload = () => {
     } else {
       alert("还未连接上服务器！")
     }
-    
   }
 }
